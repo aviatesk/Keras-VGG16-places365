@@ -23,18 +23,19 @@ from keras.regularizers import l2
 from keras.layers.core import Dropout
 from keras.layers import GlobalAveragePooling2D
 from keras.layers import GlobalMaxPooling2D
-from keras.applications.imagenet_utils import _obtain_input_shape
+from keras_applications.imagenet_utils import _obtain_input_shape
 from keras.engine.topology import get_source_inputs
 from keras.utils.data_utils import get_file
 from keras.utils import layer_utils
-
 
 WEIGHTS_PATH = 'https://github.com/GKalliatakis/Keras-VGG16-places365/releases/download/v1.0/vgg16-hybrid1365_weights_tf_dim_ordering_tf_kernels.h5'
 WEIGHTS_PATH_NO_TOP = 'https://github.com/GKalliatakis/Keras-VGG16-places365/releases/download/v1.0/vgg16-hybrid1365_weights_tf_dim_ordering_tf_kernels_notop.h5'
 
 
-def VGG16_Hybrid_1365(include_top=True, weights='places',
-                      input_tensor=None, input_shape=None,
+def VGG16_Hybrid_1365(include_top=True,
+                      weights='places',
+                      input_tensor=None,
+                      input_shape=None,
                       pooling=None,
                       classes=1365):
     """Instantiates the VGG-ImageNetPlaces365-hybrid architecture.
@@ -95,14 +96,13 @@ def VGG16_Hybrid_1365(include_top=True, weights='places',
         raise ValueError('If using `weights` as places with `include_top`'
                          ' as true, `classes` should be 1365')
 
-
     # Determine proper input shape
-    input_shape = _obtain_input_shape(input_shape,
-                                      default_size=224,
-                                      min_size=48,
-                                      data_format=K.image_data_format(),
-                                      require_flatten=include_top)
-
+    input_shape = _obtain_input_shape(
+        input_shape,
+        default_size=224,
+        min_size=48,
+        data_format=K.image_data_format(),
+        require_flatten=include_top)
 
     if input_tensor is None:
         img_input = Input(shape=input_shape)
@@ -112,84 +112,147 @@ def VGG16_Hybrid_1365(include_top=True, weights='places',
         else:
             img_input = input_tensor
 
-
-
     # Block 1
-    x = Conv2D(filters=64, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block1_conv1')(img_input)
+    x = Conv2D(
+        filters=64,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block1_conv1')(img_input)
 
-    x = Conv2D(filters=64, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block1_conv2')(x)
+    x = Conv2D(
+        filters=64,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block1_conv2')(x)
 
-    x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name="block1_pool", padding='valid')(x)
-
-
+    x = MaxPooling2D(
+        pool_size=(2, 2), strides=(2, 2), name="block1_pool",
+        padding='valid')(x)
 
     # Block 2
-    x = Conv2D(filters=128, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block2_conv1')(x)
+    x = Conv2D(
+        filters=128,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block2_conv1')(x)
 
-    x = Conv2D(filters=128, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block2_conv2')(x)
+    x = Conv2D(
+        filters=128,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block2_conv2')(x)
 
-    x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name="block2_pool", padding='valid')(x)
-
-
+    x = MaxPooling2D(
+        pool_size=(2, 2), strides=(2, 2), name="block2_pool",
+        padding='valid')(x)
 
     # Block 3
-    x = Conv2D(filters=256, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block3_conv1')(x)
+    x = Conv2D(
+        filters=256,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block3_conv1')(x)
 
-    x = Conv2D(filters=256, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block3_conv2')(x)
+    x = Conv2D(
+        filters=256,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block3_conv2')(x)
 
-    x = Conv2D(filters=256, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block3_conv3')(x)
+    x = Conv2D(
+        filters=256,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block3_conv3')(x)
 
-    x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name="block3_pool", padding='valid')(x)
-
-
+    x = MaxPooling2D(
+        pool_size=(2, 2), strides=(2, 2), name="block3_pool",
+        padding='valid')(x)
 
     # Block 4
-    x = Conv2D(filters=512, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block4_conv1')(x)
+    x = Conv2D(
+        filters=512,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block4_conv1')(x)
 
-    x = Conv2D(filters=512, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block4_conv2')(x)
+    x = Conv2D(
+        filters=512,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block4_conv2')(x)
 
-    x = Conv2D(filters=512, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block4_conv3')(x)
+    x = Conv2D(
+        filters=512,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block4_conv3')(x)
 
-    x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name="block4_pool", padding='valid')(x)
-
-
+    x = MaxPooling2D(
+        pool_size=(2, 2), strides=(2, 2), name="block4_pool",
+        padding='valid')(x)
 
     # Block 5
-    x = Conv2D(filters=512, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block5_conv1')(x)
+    x = Conv2D(
+        filters=512,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block5_conv1')(x)
 
-    x = Conv2D(filters=512, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block5_conv2')(x)
+    x = Conv2D(
+        filters=512,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block5_conv2')(x)
 
-    x = Conv2D(filters=512, kernel_size=3, strides=(1, 1), padding='same',
-                     kernel_regularizer=l2(0.0002),
-                     activation='relu', name='block5_conv3')(x)
+    x = Conv2D(
+        filters=512,
+        kernel_size=3,
+        strides=(1, 1),
+        padding='same',
+        kernel_regularizer=l2(0.0002),
+        activation='relu',
+        name='block5_conv3')(x)
 
-    x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name="block5_pool", padding='valid')(x)
-
-
+    x = MaxPooling2D(
+        pool_size=(2, 2), strides=(2, 2), name="block5_pool",
+        padding='valid')(x)
 
     if include_top:
         # Classification block
@@ -215,20 +278,21 @@ def VGG16_Hybrid_1365(include_top=True, weights='places',
     else:
         inputs = img_input
 
-
     # Create model.
     model = Model(inputs, x, name='vgg16-hybrid1365')
 
     # load weights
     if weights == 'places':
         if include_top:
-            weights_path = get_file('vgg16-hybrid1365_weights_tf_dim_ordering_tf_kernels.h5',
-                                    WEIGHTS_PATH,
-                                    cache_subdir='models')
+            weights_path = get_file(
+                'vgg16-hybrid1365_weights_tf_dim_ordering_tf_kernels.h5',
+                WEIGHTS_PATH,
+                cache_subdir='models')
         else:
-            weights_path = get_file('vgg16-hybrid1365_weights_tf_dim_ordering_tf_kernels_notop.h5',
-                                    WEIGHTS_PATH_NO_TOP,
-                                    cache_subdir='models')
+            weights_path = get_file(
+                'vgg16-hybrid1365_weights_tf_dim_ordering_tf_kernels_notop.h5',
+                WEIGHTS_PATH_NO_TOP,
+                cache_subdir='models')
 
         model.load_weights(weights_path)
 
@@ -240,7 +304,8 @@ def VGG16_Hybrid_1365(include_top=True, weights='places',
                 maxpool = model.get_layer(name='block5_pool')
                 shape = maxpool.output_shape[1:]
                 dense = model.get_layer(name='fc1')
-                layer_utils.convert_dense_weights_data_format(dense, shape, 'channels_first')
+                layer_utils.convert_dense_weights_data_format(
+                    dense, shape, 'channels_first')
 
             if K.backend() == 'tensorflow':
                 warnings.warn('You are using the TensorFlow backend, yet you '
@@ -252,11 +317,8 @@ def VGG16_Hybrid_1365(include_top=True, weights='places',
                               'your Keras config '
                               'at ~/.keras/keras.json.')
 
-
     elif weights is not None:
         model.load_weights(weights)
-
-
 
     return model
 
@@ -288,7 +350,7 @@ if __name__ == '__main__':
     counter = 0
     with open(file_name) as class_file:
         for line in class_file:
-            if counter <=999:
+            if counter <= 999:
                 tmp = line[9:]
 
                 if 0 <= counter <= 9:
@@ -303,15 +365,13 @@ if __name__ == '__main__':
             else:
                 classes.append(line.strip().split(' ')[0][3:])
 
-            counter +=1
+            counter += 1
     classes = tuple(classes)
-
 
     print('--PREDICTED SCENE CATEGORIES:')
     # output the prediction
     for i in range(0, 5):
         print(classes[top_preds[i]])
-
 
     # --PREDICTED SCENE CATEGORIES:
     # restaurant, eating house, eating place, eatery
@@ -319,4 +379,3 @@ if __name__ == '__main__':
     # patio, terrace
     # food_court
     # cafeteria
-
